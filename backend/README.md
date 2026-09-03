@@ -1,23 +1,60 @@
 # Deeliva backend (placeholder)
 
 A small Express + TypeScript API that serves the Deeliva app real HTTP
-responses shaped like the eventual production API, backed by an in-memory
-store (persisted to `data.json` so state survives restarts). It exists so the
+responses shaped like the eventual production API, backed by Netlify DB
+(Postgres) so state survives across deploys and cold starts. It exists so the
 app isn't built against a mock inside the app itself — swap `API_BASE_URL` in
 `app/src/api/config.ts` for the real Deeliva API's URL and this whole
 directory becomes unnecessary, **as long as the real API's responses match
 the shapes below** (or `app/src/api/client.ts` is updated to match the real
 API instead).
 
+It's deployed as a Netlify Function (`netlify/functions/api.js` wraps the
+Express app with `serverless-http`) rather than a long-running server, since
+that's what Netlify hosts. `src/app.ts` holds the actual Express app (used
+both by the function and by plain `node`/`tsx` locally); `src/server.ts` is
+just a thin `app.listen()` wrapper for the latter.
+
 ## Running
+
+The app needs a real Postgres connection (via `@netlify/database`), which
+only exists once this is linked to its Netlify site, so local dev goes
+through the Netlify CLI rather than plain `tsx`:
 
 ```bash
 npm install
-npm run dev      # tsx --watch, http://localhost:4000
+npx netlify link --id 8bc100bb-b754-4e91-b2a7-483221d58ced   # one-time, needs `netlify login` first
+npx netlify dev      # emulates the Function + provisions/connects the dev DB branch, http://localhost:8888
 ```
 
+`npm run dev` (`tsx --watch src/server.ts`) still works for quick local
+iteration on anything that *doesn't* touch the database, but every route that
+reads or writes `db` will throw without a database connection string in the
+environment — `npx netlify dev:exec -- npm run dev` runs it with the linked
+site's env vars injected if you want the plain-Express path with a real DB.
+
 `npm run typecheck` runs `tsc --noEmit`. There's no test suite — the routes
-were smoke-tested by hand against every endpoint during development.
+were smoke-tested by hand against every endpoint during development (against
+the original file-based store; re-verify after the first real deploy).
+
+## Deploying
+
+The Netlify site (`deeliva-backend`, id `8bc100bb-b754-4e91-b2a7-483221d58ced`)
+already exists but has never had a successful deploy — the deploy attempted
+from this project's dev session was rejected outright by Netlify's API, which
+looks like an environment-specific restriction rather than anything wrong
+with the code. From a normal machine:
+
+```bash
+npm install -g netlify-cli   # if you don't have it
+netlify login
+netlify link --id 8bc100bb-b754-4e91-b2a7-483221d58ced
+netlify deploy --prod
+```
+
+That provisions the Postgres database (via the `@netlify/database` /
+`netlify/database/migrations/` setup) and publishes the function on first
+deploy — no manual database setup needed.
 
 ## Swapping in the real API
 

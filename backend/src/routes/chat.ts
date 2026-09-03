@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db, nextId, persist } from '../store';
+import { wrap } from '../lib/asyncHandler';
 import { Role } from '../types';
 
 export const chatRouter = Router();
@@ -17,7 +18,7 @@ chatRouter.get('/chat', (req, res) => {
   });
 });
 
-chatRouter.post('/chat', (req, res) => {
+chatRouter.post('/chat', wrap(async (req, res) => {
   const role: Role = req.body?.role === 'courier' ? 'courier' : 'customer';
   const text = String(req.body?.text ?? '').trim();
   if (!text) {
@@ -26,8 +27,8 @@ chatRouter.post('/chat', (req, res) => {
   }
   db.messages.push({ id: nextId('msg'), role, fromMe: true, text, createdAt: Date.now() });
   db.messages.push({ id: nextId('msg'), role, fromMe: false, text: AUTO_REPLY, createdAt: Date.now() + 900 });
-  persist();
+  await persist();
   res.status(201).json({
     messages: db.messages.filter((m) => m.role === role).sort((a, b) => a.createdAt - b.createdAt),
   });
-});
+}));

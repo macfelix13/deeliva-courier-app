@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db, nextId, persist, SERVICES } from '../store';
 import { computeTrackState, statusToInitialStage, TRACK_STEPS } from '../lib/tracking';
 import { matchesSearch, orderStatusLabel, orderTotal } from '../lib/orders';
+import { wrap } from '../lib/asyncHandler';
 import { Order, OrderItem } from '../types';
 
 export const ordersRouter = Router();
@@ -40,7 +41,7 @@ ordersRouter.get('/orders/:id', (req, res) => {
   res.json({ ...order, total: orderTotal(order), statusLabel: orderStatusLabel(order.status) });
 });
 
-ordersRouter.post('/orders', (req, res) => {
+ordersRouter.post('/orders', wrap(async (req, res) => {
   const { items, window, dropAddress, paymentMethodId, pickupAddress } = req.body ?? {};
   if (!Array.isArray(items) || items.length === 0) {
     res.status(400).json({ error: 'items is required' });
@@ -78,9 +79,9 @@ ordersRouter.post('/orders', (req, res) => {
   };
 
   db.orders.unshift(order);
-  persist();
+  await persist();
   res.status(201).json({ ...order, total: orderTotal(order) });
-});
+}));
 
 ordersRouter.get('/orders/:id/tracking', (req, res) => {
   const order = db.orders.find((o) => o.id === req.params.id);

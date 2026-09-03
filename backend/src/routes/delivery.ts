@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db, persist } from '../store';
+import { wrap } from '../lib/asyncHandler';
 import { Job } from '../types';
 
 export const deliveryRouter = Router();
@@ -52,7 +53,7 @@ deliveryRouter.get('/delivery/active', (_req, res) => {
   res.json({ active: job ? serialize(job) : null });
 });
 
-deliveryRouter.patch('/delivery/active', (req, res) => {
+deliveryRouter.patch('/delivery/active', wrap(async (req, res) => {
   const job = activeJob();
   if (!job) {
     res.status(404).json({ error: 'no active delivery' });
@@ -61,11 +62,11 @@ deliveryRouter.patch('/delivery/active', (req, res) => {
   const { receiver, proof } = req.body ?? {};
   if (typeof receiver === 'string') job.receiver = receiver;
   if (proof === 'photo' || proof === 'sign') job.proof = proof;
-  persist();
+  await persist();
   res.json({ active: serialize(job) });
-});
+}));
 
-deliveryRouter.post('/delivery/advance', (_req, res) => {
+deliveryRouter.post('/delivery/advance', wrap(async (_req, res) => {
   const job = activeJob();
   if (!job) {
     res.status(404).json({ error: 'no active delivery' });
@@ -73,11 +74,11 @@ deliveryRouter.post('/delivery/advance', (_req, res) => {
   }
   if (job.deliveryStep >= 4) {
     job.status = 'delivered';
-    persist();
+    await persist();
     res.json({ active: null });
     return;
   }
   job.deliveryStep += 1;
-  persist();
+  await persist();
   res.json({ active: serialize(job) });
-});
+}));

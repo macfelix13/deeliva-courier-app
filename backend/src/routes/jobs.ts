@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db, freshJobs, persist } from '../store';
+import { wrap } from '../lib/asyncHandler';
 
 export const jobsRouter = Router();
 
@@ -29,14 +30,14 @@ jobsRouter.get('/jobs', (_req, res) => {
   });
 });
 
-jobsRouter.patch('/courier/online', (req, res) => {
+jobsRouter.patch('/courier/online', wrap(async (req, res) => {
   const { online } = req.body ?? {};
   db.online = Boolean(online);
-  persist();
+  await persist();
   res.json({ online: db.online });
-});
+}));
 
-jobsRouter.post('/jobs/:id/accept', (req, res) => {
+jobsRouter.post('/jobs/:id/accept', wrap(async (req, res) => {
   const job = db.jobs.find((j) => j.id === req.params.id);
   if (!job || job.status !== 'open') {
     res.status(404).json({ error: 'job not available' });
@@ -45,24 +46,24 @@ jobsRouter.post('/jobs/:id/accept', (req, res) => {
   job.status = 'accepted';
   job.courierId = db.users.courier.id;
   job.deliveryStep = 0;
-  persist();
+  await persist();
   res.json({ id: job.id });
-});
+}));
 
-jobsRouter.post('/jobs/:id/skip', (req, res) => {
+jobsRouter.post('/jobs/:id/skip', wrap(async (req, res) => {
   const job = db.jobs.find((j) => j.id === req.params.id);
   if (!job) {
     res.status(404).json({ error: 'not found' });
     return;
   }
   job.status = 'skipped';
-  persist();
+  await persist();
   res.json({ id: job.id });
-});
+}));
 
-jobsRouter.post('/jobs/refill', (_req, res) => {
+jobsRouter.post('/jobs/refill', wrap(async (_req, res) => {
   const keep = db.jobs.filter((j) => j.status === 'accepted');
   db.jobs = keep.concat(freshJobs());
-  persist();
+  await persist();
   res.json({ list: db.jobs.filter((j) => j.status === 'open').map(toListItem) });
-});
+}));

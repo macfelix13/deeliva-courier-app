@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import { getDatabase } from '@netlify/database';
 import {
   Address, ChatMessage, Job, Order, PaymentMethod, Role, Service, UserProfile,
 } from './types';
@@ -7,8 +6,6 @@ import { computeTrackState, statusToInitialStage } from './lib/tracking';
 
 // re-exported for routes that only need the Job shape
 export type { Job };
-
-const DATA_FILE = path.join(__dirname, '..', 'data.json');
 
 export const SERVICES: Service[] = [
   { id: 'sameday', name: 'Same day', window: 'Collected by 12:00 · dropped by 18:00', price: 14.4 },
@@ -42,10 +39,13 @@ export function freshJobs(): Job[] {
   }));
 }
 
-let uid = 1000;
+/**
+ * Not a monotonic in-process counter: this runs across serverless
+ * invocations that don't share memory, so ids need to be unique without
+ * any shared state.
+ */
 export function nextId(prefix: string) {
-  uid += 1;
-  return `${prefix}_${uid}`;
+  return `${prefix}_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 }
 
 export interface Db {
@@ -171,30 +171,46 @@ function refreshStaleDemoOrder(data: Db) {
   }
 }
 
-function load(): Db {
-  if (fs.existsSync(DATA_FILE)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-      refreshStaleDemoOrder(data);
-      return data;
-    } catch {
-      // fall through to reseed on a corrupt file
-    }
+/**
+ * Persistence: Netlify Functions are stateless between invocations (a cold
+ * start gets nothing, and a warm one can't be relied on to have handled the
+ * previous request), so the whole app state is kept as a single JSONB blob
+ * in Netlify DB and re-read at the top of every request — see
+ * `hydrate()`/`persist()` and the request middleware in src/app.ts.
+ */
+const STATE_ROW_ID = 'singleton';
+
+async function loadFromDb(): Promise<Db | null> {
+  const rows = await getDatabase().sql`SELECT data FROM app_state WHERE id = ${STATE_ROW_ID}`;
+  return rows.length ? (rows[0].data as Db) : null;
+}
+
+async function saveToDb(data: Db): Promise<void> {
+  await getDatabase().sql`
+    INSERT INTO app_state (id, data, updated_at)
+    VALUES (${STATE_ROW_ID}, ${JSON.stringify(data)}::jsonb, now())
+    ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
+  `;
+}
+
+/** Synchronous fallback so every route module can keep importing `db` directly; overwritten by hydrate(). */
+export const db: Db = seed();
+
+export async function hydrate(): Promise<void> {
+  const loaded = await loadFromDb();
+  if (loaded) {
+    refreshStaleDemoOrder(loaded);
+    Object.assign(db, loaded);
+  } else {
+    await saveToDb(db);
   }
-  return seed();
 }
 
-export const db: Db = load();
-
-let saveTimer: NodeJS.Timeout | null = null;
-export function persist() {
-  if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(db, null, 2));
-  }, 200);
+export async function persist(): Promise<void> {
+  await saveToDb(db);
 }
 
-export function resetDb() {
+export async function resetDb(): Promise<void> {
   Object.assign(db, seed());
-  persist();
+  await persist();
 }

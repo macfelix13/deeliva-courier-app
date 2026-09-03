@@ -14,10 +14,10 @@ prototype.
 ## Structure
 
 - `backend/` — a small Express + TypeScript API standing in for the real
-  Deeliva backend. In-memory store (with a JSON file for persistence across
-  restarts), seeded with the same demo data the prototype used. See
-  `backend/README.md` for the endpoint list and how to swap in the real API
-  later.
+  Deeliva backend, deployed as a Netlify Function backed by Netlify DB
+  (Postgres), seeded with the same demo data the prototype used. See
+  `backend/README.md` for the endpoint list, local dev, deploying, and how to
+  swap in the real API later.
 - `app/` — the Expo (React Native + TypeScript) app. Two role-based
   navigation trees (customer / courier), 11 screens, styled to match the
   prototype's "Industry" design system (Barlow / Barlow Condensed, hairline
@@ -28,20 +28,23 @@ prototype.
 Two processes, in two terminals:
 
 ```bash
-# 1. Backend
+# 1. Backend — needs the Netlify CLI since it runs against a real Postgres
+# database provisioned through Netlify; see backend/README.md for the
+# one-time `netlify link` step and why plain `npm run dev` isn't enough here.
 cd backend
 npm install
-npm run dev          # http://localhost:4000
+npx netlify dev       # http://localhost:8888
 
 # 2. App
 cd app
 npm install
-npm start             # then press i (iOS simulator), a (Android), or scan the QR code in Expo Go
+npm start              # then press i (iOS simulator), a (Android), or scan the QR code in Expo Go
 ```
 
 The app talks to the backend over HTTP — see `app/src/api/config.ts` for the
-base URL (defaults to `localhost:4000` on iOS, `10.0.2.2:4000` on the Android
-emulator; a physical device needs your machine's LAN IP).
+base URL, which needs updating to match whatever port/host the backend is
+actually running on (Netlify Dev's default port, or the deployed URL once
+it's live).
 
 ## Design decisions worth knowing
 
