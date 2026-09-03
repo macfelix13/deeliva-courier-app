@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/industry-79c7dc37-bf04-4df5-a720-ab74f18f360c/styles.css">
+<script src="_ds/industry-79c7dc37-bf04-4df5-a720-ab74f18f360c/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:var(--color-neutral-200);
+background-image:linear-gradient(to right,color-mix(in srgb,#1d1f20 5%,transparent) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in srgb,#1d1f20 5%,transparent) 1px,transparent 1px);
+background-size:34px 34px}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-900)}
+.dv-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;border-bottom:1px solid var(--color-divider)}
+.k{font:600 10px/1 var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)}
+.mono{font:500 11px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.02em}
+.jump{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--color-divider);padding:9px 2px;font:400 13px/1.2 var(--font-body);color:var(--color-text);cursor:pointer}
+.jump:hover{background:var(--color-accent-100);color:var(--color-accent-900)}
+.jump[data-on="1"]{background:var(--color-accent);color:#fff;padding-left:8px}
+</style>
+</helmet>
+
+<div style="display:flex;gap:30px;align-items:flex-start;padding:36px 40px 60px;font-family:var(--font-body)">
+
+  <div style="width:216px;flex:none;position:sticky;top:36px">
+    <div class="k">Deeliva</div>
+    <h3 style="margin:6px 0 14px">Courier app</h3>
+    <div style="display:flex;border:1px solid var(--color-divider);margin-bottom:20px">
+      <div onClick="{{ nav.asCustomer }}" style="flex:1;text-align:center;padding:8px 0;cursor:pointer;font-size:13px;background:{{ ui.custBg }};color:{{ ui.custFg }}">Customer</div>
+      <div onClick="{{ nav.asCourier }}" style="flex:1;text-align:center;padding:8px 0;cursor:pointer;font-size:13px;border-left:1px solid var(--color-divider);background:{{ ui.courBg }};color:{{ ui.courFg }}">Courier</div>
+    </div>
+    <div class="k" style="margin-bottom:6px">Screens</div>
+    <sc-for list="{{ screenIndex }}" as="s" hint-placeholder-count="9">
+      <button class="jump" data-on="{{ s.on }}" onClick="{{ s.onTap }}">{{ s.n }} &nbsp; {{ s.label }}</button>
+    </sc-for>
+    <p class="text-muted" style="font-size:11px;margin-top:16px;text-wrap:pretty">Everything is live — addresses, filters, cart, tracking clock, chat and the courier flow all hold real state.</p>
+  </div>
+
+  <div style="flex:none">
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;display:flex;flex-direction:column;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);font-size:15px">
+
+        <sc-if value="{{ at.topnav }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:56px 16px 0;background:var(--color-bg);border-bottom:1px solid var(--color-divider);flex:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px">
+              <div class="k" style="letter-spacing:.22em">Deeliva</div>
+              <div onClick="{{ nav.chat }}" class="mono" style="cursor:pointer;color:var(--color-accent-700)">Support</div>
+            </div>
+            <div style="display:flex;gap:2px">
+              <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+                <div onClick="{{ t.onTap }}" style="flex:1;text-align:center;padding:9px 0;font:600 12px/1 var(--font-heading);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-bottom:2px solid {{ t.line }};color:{{ t.color }}">{{ t.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch">
+
+          <!-- ONBOARDING -->
+          <sc-if value="{{ at.onboarding }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:64px 22px 30px;min-height:100%;display:flex;flex-direction:column">
+              <div class="k" style="letter-spacing:.22em">Deeliva</div>
+              <h1 style="font-size:44px;margin:10px 0 0;line-height:.98">{{ ob.title }}</h1>
+              <p class="text-muted" style="margin-top:10px;font-size:14px;text-wrap:pretty">{{ ob.sub }}</p>
+
+              <div style="display:flex;gap:6px;margin:22px 0 26px">
+                <sc-for list="{{ ob.dots }}" as="d" hint-placeholder-count="3">
+                  <div style="height:3px;flex:1;background:{{ d.fill }}"></div>
+                </sc-for>
+              </div>
+
+              <sc-if value="{{ ob.isPhone }}" hint-placeholder-val="{{ false }}">
+                <div class="field">
+                  <label style="font-size:12px">Mobile number</label>
+                  <input class="input" style="font-size:16px" value="{{ ob.phone }}" onChange="{{ ob.setPhone }}" placeholder="+44 7700 900112">
+                </div>
+                <div class="blueprint" style="margin-top:22px;padding:16px">
+                  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                  <div class="k">Why we ask</div>
+                  <p class="text-muted" style="margin:6px 0 0;font-size:13px;text-wrap:pretty">Your courier texts this number on arrival, and we send one tracking link per parcel. Nothing else.</p>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ ob.isPickup }}" hint-placeholder-val="{{ false }}">
+                <div class="field">
+                  <label style="font-size:12px">Pickup address</label>
+                  <input class="input" style="font-size:16px" value="{{ ob.pickup }}" onChange="{{ ob.setPickup }}" placeholder="Unit 4, Barrow Works, Leeds">
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
+                  <sc-for list="{{ ob.suggest }}" as="p" hint-placeholder-count="3">
+                    <div onClick="{{ p.onTap }}" class="tag tag-outline" style="cursor:pointer">{{ p.label }}</div>
+                  </sc-for>
+                </div>
+                <div class="field" style="margin-top:22px">
+                  <label style="font-size:12px">Access notes for the courier</label>
+                  <input class="input" style="font-size:16px" value="{{ ob.notes }}" onChange="{{ ob.setNotes }}" placeholder="Loading bay, buzzer 4">
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ ob.isDone }}" hint-placeholder-val="{{ false }}">
+                <div class="blueprint" style="padding:18px">
+                  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                  <div class="k">Your default pickup</div>
+                  <div style="font:600 20px/1.2 var(--font-heading);margin-top:8px">{{ ob.pickupOut }}</div>
+                  <div class="dv-row" style="border-bottom:0;padding-bottom:0">
+                    <span class="text-muted" style="font-size:12px">Notes</span>
+                    <span class="mono">{{ ob.notesOut }}</span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:18px">
+                  <div class="blueprint" style="flex:1;padding:14px">
+                    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                    <div style="font:600 26px/1 var(--font-heading)">14</div>
+                    <div class="text-muted" style="font-size:11px;margin-top:4px">couriers within 3&nbsp;km</div>
+                  </div>
+                  <div class="blueprint" style="flex:1;padding:14px">
+                    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                    <div style="font:600 26px/1 var(--font-heading)">40<span style="font-size:15px"> min</span></div>
+                    <div class="text-muted" style="font-size:11px;margin-top:4px">typical first pickup</div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <div style="flex:1;min-height:24px"></div>
+              <button class="btn btn-primary blueprint" style="width:100%;height:50px;font-size:15px" onClick="{{ ob.next }}">
+                <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                {{ ob.cta }}
+              </button>
+              <div onClick="{{ ob.skip }}" class="text-muted" style="text-align:center;font-size:12px;padding:14px 0 0;cursor:pointer">Skip for now</div>
+            </div>
+          </sc-if>
+
+          <!-- HOME -->
+          <sc-if value="{{ at.home }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:{{ ui.padTop }} 0 26px">
+              <div style="padding:0 18px">
+                <div class="k">Good morning, Nadia</div>
+                <h2 style="margin:6px 0 0;font-size:32px">Send something</h2>
+              </div>
+
+              <sc-if value="{{ home.hasActive }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ nav.tracking }}" class="blueprint" style="margin:18px 18px 0;padding:16px;cursor:pointer;background:var(--color-accent-900);color:#fff;border-color:var(--color-accent-900)">
+                  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                    <div>
+                      <div class="k" style="color:var(--color-accent-300)">In transit</div>
+                      <div style="font:600 24px/1.1 var(--font-heading);margin-top:6px">{{ track.stageLabel }}</div>
+                      <div class="mono" style="color:var(--color-accent-200);margin-top:6px">{{ home.activeRef }}</div>
+                    </div>
+                    <div style="text-align:right">
+                      <div style="font:600 30px/1 var(--font-heading)">{{ track.eta }}</div>
+                      <div class="k" style="color:var(--color-accent-300)">min away</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:3px;margin-top:14px">
+                    <sc-for list="{{ track.bars }}" as="b" hint-placeholder-count="4">
+                      <div style="flex:1;height:3px;background:{{ b.fill }}"></div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ home.isGrid }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--color-divider);margin-top:20px;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+                  <sc-for list="{{ home.cells }}" as="c" hint-placeholder-count="4">
+                    <div onClick="{{ c.onTap }}" style="background:var(--color-bg);padding:20px 16px 18px;cursor:pointer;min-height:118px;display:flex;flex-direction:column;justify-content:space-between">
+                      <div class="mono" style="color:var(--color-accent-700)">{{ c.num }}</div>
+                      <div>
+                        <div style="font:600 19px/1.1 var(--font-heading)">{{ c.title }}</div>
+                        <div class="text-muted" style="font-size:11.5px;margin-top:4px;text-wrap:pretty">{{ c.sub }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ home.isCards }}" hint-placeholder-val="{{ true }}">
+                <div style="padding:0 18px">
+                  <sc-for list="{{ home.cells }}" as="c" hint-placeholder-count="4">
+                    <div onClick="{{ c.onTap }}" class="dv-row" style="cursor:pointer">
+                      <div style="display:flex;gap:14px;align-items:center">
+                        <div class="mono" style="color:var(--color-accent-700);width:22px">{{ c.num }}</div>
+                        <div>
+                          <div style="font:600 18px/1.15 var(--font-heading)">{{ c.title }}</div>
+                          <div class="text-muted" style="font-size:12px">{{ c.sub }}</div>
+                        </div>
+                      </div>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <div style="padding:22px 18px 0">
+                <div class="k" style="margin-bottom:4px">Saved routes</div>
+                <sc-for list="{{ home.routes }}" as="r" hint-placeholder-count="2">
+                  <div onClick="{{ r.onTap }}" class="dv-row" style="cursor:pointer">
+                    <div>
+                      <div style="font-size:14px">{{ r.name }}</div>
+                      <div class="text-muted mono">{{ r.leg }}</div>
+                    </div>
+                    <span class="tag tag-outline">{{ r.price }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- SEARCH -->
+          <sc-if value="{{ at.search }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:{{ ui.padTop }} 0 26px">
+              <div style="padding:0 18px">
+                <h2 style="margin:0;font-size:30px">Find a shipment</h2>
+                <div style="display:flex;align-items:center;gap:10px;border:1px solid var(--color-divider);padding:11px 12px;margin-top:14px;background:var(--color-neutral-100)">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+                  <input value="{{ search.q }}" onChange="{{ search.setQ }}" placeholder="Tracking no., address or name" style="border:0;background:none;outline:none;flex:1;font:400 15px var(--font-body);color:var(--color-text)">
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">
+                  <sc-for list="{{ search.chips }}" as="c" hint-placeholder-count="5">
+                    <div onClick="{{ c.onTap }}" class="tag" style="cursor:pointer;background:{{ c.bg }};color:{{ c.fg }};border:1px solid {{ c.bd }}">{{ c.label }}</div>
+                  </sc-for>
+                </div>
+                <div class="dv-row" style="border-bottom:0">
+                  <span class="k">{{ search.count }} results</span>
+                  <span class="text-muted mono">sorted by date</span>
+                </div>
+              </div>
+              <div style="border-top:1px solid var(--color-divider)">
+                <sc-for list="{{ search.results }}" as="r" hint-placeholder-count="4">
+                  <div onClick="{{ r.onTap }}" style="padding:14px 18px;border-bottom:1px solid var(--color-divider);cursor:pointer;display:flex;gap:12px;align-items:flex-start">
+                    <div class="blueprint" style="width:42px;height:42px;flex:none;display:flex;align-items:center;justify-content:center">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.5"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
+                    </div>
+                    <div style="flex:1">
+                      <div style="display:flex;justify-content:space-between;gap:8px">
+                        <div style="font:600 17px/1.2 var(--font-heading)">{{ r.title }}</div>
+                        <div class="mono text-muted">{{ r.date }}</div>
+                      </div>
+                      <div class="text-muted" style="font-size:12.5px;margin-top:2px">{{ r.leg }}</div>
+                      <div style="margin-top:7px;display:flex;gap:6px;align-items:center">
+                        <span class="tag tag-accent">{{ r.status }}</span>
+                        <span class="mono text-muted">{{ r.ref }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ search.empty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:44px 22px;text-align:center">
+                    <div class="k">No matches</div>
+                    <p class="text-muted" style="font-size:13px;margin-top:8px">Nothing for “{{ search.q }}”. Try a tracking number or clear the filters.</p>
+                    <button class="btn btn-secondary" onClick="{{ search.clear }}" style="margin-top:8px">Clear filters</button>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- DETAIL -->
+          <sc-if value="{{ at.detail }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:{{ ui.padTop }} 0 26px">
+              <div style="padding:0 18px">
+                <div onClick="{{ nav.back }}" class="mono" style="color:var(--color-accent-700);cursor:pointer">← Back</div>
+                <div class="k" style="margin-top:14px">Parcel 1 of 1</div>
+                <h2 style="margin:6px 0 0;font-size:30px">{{ detail.title }}</h2>
+                <p class="text-muted" style="font-size:13.5px;margin-top:8px;text-wrap:pretty">{{ detail.blurb }}</p>
+              </div>
+
+              <div class="blueprint duotone" style="margin:18px 18px 0;height:150px;background:var(--color-neutral-300);display:flex;align-items:center;justify-content:center">
+                <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                <div style="text-align:center">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-700)" stroke-width="1.5"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
+                  <div class="mono" style="color:var(--color-neutral-700);margin-top:8px">PARCEL PHOTO — drop image</div>
+                </div>
+              </div>
+
+              <div style="padding:20px 18px 0">
+                <div class="k">Measurements</div>
+                <sc-for list="{{ detail.specs }}" as="s" hint-placeholder-count="4">
+                  <div class="dv-row">
+                    <span class="text-muted" style="font-size:13px">{{ s.k }}</span>
+                    <span class="mono">{{ s.v }}</span>
+                  </div>
+                </sc-for>
+
+                <div class="k" style="margin-top:22px">Weight — {{ detail.weight }} kg</div>
+                <input type="range" min="0.5" max="25" step="0.5" value="{{ detail.weightRaw }}" onChange="{{ detail.setWeight }}" style="width:100%;margin-top:10px;accent-color:var(--color-accent)">
+
+                <div class="k" style="margin-top:22px">Service</div>
+                <sc-for list="{{ detail.services }}" as="s" hint-placeholder-count="3">
+                  <div onClick="{{ s.onTap }}" class="blueprint" style="margin-top:10px;padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-color:{{ s.bd }};background:{{ s.bg }}">
+                    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                    <div>
+                      <div style="font:600 19px/1.1 var(--font-heading)">{{ s.name }}</div>
+                      <div class="text-muted" style="font-size:12px;margin-top:3px">{{ s.window }}</div>
+                    </div>
+                    <div style="text-align:right">
+                      <div style="font:600 19px/1 var(--font-heading)">{{ s.price }}</div>
+                      <div class="mono" style="color:{{ s.tick }}">{{ s.mark }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+
+                <div class="dv-row" style="margin-top:16px">
+                  <div>
+                    <div style="font-size:14px">Add cover to £500</div>
+                    <div class="text-muted" style="font-size:12px">+£1.80 · optional</div>
+                  </div>
+                  <div onClick="{{ detail.toggleCover }}" style="width:44px;height:24px;border:1px solid var(--color-divider);cursor:pointer;display:flex;padding:2px;background:{{ detail.coverBg }};justify-content:{{ detail.coverPos }}">
+                    <div style="width:18px;height:18px;background:{{ detail.coverKnob }}"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding:20px 18px 0">
+                <button class="btn btn-primary blueprint" style="width:100%;height:50px;font-size:15px" onClick="{{ detail.addToCart }}">
+                  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                  Add to shipment · {{ detail.total }}
+                </button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- CHECKOUT -->
+          <sc-if value="{{ at.checkout }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:{{ ui.padTop }} 0 26px">
+              <div style="padding:0 18px">
+                <div onClick="{{ nav.back }}" class="mono" style="color:var(--color-accent-700);cursor:pointer">← Back</div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px">
+                  <h2 style="margin:0;font-size:30px">{{ co.heading }}</h2>
+                  <span class="mono text-muted">{{ co.stepLabel }}</span>
+                </div>
+                <sc-if value="{{ co.isStepped }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:4px;margin-top:14px">
+                    <sc-for list="{{ co.dots }}" as="d" hint-placeholder-count="3">
+                      <div style="flex:1;height:3px;background:{{ d.fill }}"></div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+
+              <sc-if value="{{ co.showParcels }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:18px 18px 0">
+                  <div class="k">Shipment</div>
+                  <sc-for list="{{ co.items }}" as="i" hint-placeholder-count="2">
+                    <div class="blueprint" style="margin-top:10px;padding:14px">
+                      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                        <div>
+                          <div style="font:600 18px/1.1 var(--font-heading)">{{ i.name }}</div>
+                          <div class="text-muted" style="font-size:12px;margin-top:3px">{{ i.meta }}</div>
+                        </div>
+                        <div style="text-align:right">
+                          <div style="font:600 17px/1 var(--font-heading)">{{ i.price }}</div>
+                          <div onClick="{{ i.onRemove }}" class="mono" style="color:var(--color-accent-700);cursor:pointer;margin-top:6px">Remove</div>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-for>
+                  <div onClick="{{ nav.detail }}" class="dv-row" style="cursor:pointer;color:var(--color-accent-700)">
+                    <span style="font-size:14px">+ Add another parcel</span>
+                    <span class="mono">edit</span>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ co.showWindow }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:18px 18px 0">
+                  <div class="k">Pickup window</div>
+                  <sc-for list="{{ co.windows }}" as="w" hint-placeholder-count="3">
+                    <div onClick="{{ w.onTap }}" style="display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px solid {{ w.bd }};margin-top:10px;cursor:pointer;background:{{ w.bg }}">
+                      <div>
+                        <div style="font:600 18px/1.1 var(--font-heading)">{{ w.label }}</div>
+                        <div class="text-muted" style="font-size:12px;margin-top:2px">{{ w.note }}</div>
+                      </div>
+                      <span class="mono" style="color:{{ w.tick }}">{{ w.mark }}</span>
+                    </div>
+                  </sc-for>
+                  <div class="field" style="margin-top:20px">
+                    <label style="font-size:12px">Drop-off address</label>
+                    <input class="input" style="font-size:16px" value="{{ co.drop }}" onChange="{{ co.setDrop }}" placeholder="Where is it going?">
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ co.showPay }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:18px 18px 0">
+                  <div class="k">Payment</div>
+                  <sc-for list="{{ co.cards }}" as="c" hint-placeholder-count="2">
+                    <div onClick="{{ c.onTap }}" style="display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px solid {{ c.bd }};margin-top:10px;cursor:pointer;background:{{ c.bg }}">
+                      <div style="display:flex;gap:12px;align-items:center">
+                        <div style="width:34px;height:22px;border:1px solid var(--color-divider)"></div>
+                        <div>
+                          <div style="font-size:14px">{{ c.name }}</div>
+                          <div class="mono text-muted">{{ c.num }}</div>
+                        </div>
+                      </div>
+                      <span class="mono" style="color:{{ c.tick }}">{{ c.mark }}</span>
+                    </div>
+                  </sc-for>
+
+                  <div class="blueprint" style="margin-top:20px;padding:16px">
+                    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                    <sc-for list="{{ co.lines }}" as="l" hint-placeholder-count="4">
+                      <div class="dv-row" style="padding:9px 0;border-bottom:1px solid {{ l.rule }}">
+                        <span style="font-size:13px;color:{{ l.color }}">{{ l.k }}</span>
+                        <span class="mono" style="font-size:{{ l.size }};color:{{ l.color }}">{{ l.v }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <div style="padding:20px 18px 0">
+                <button class="btn btn-primary blueprint" style="width:100%;height:50px;font-size:15px" onClick="{{ co.next }}">
+                  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                  {{ co.cta }}
+                </button>
+                <p class="text-muted" style="font-size:11.5px;text-align:center;margin-top:12px;text-wrap:pretty">You can change the window free of charge up to 30 minutes before pickup.</p>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- TRACKING -->
+          <sc-if value="{{ at.tracking }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:{{ ui.padTop }} 0 26px">
+              <div style="padding:0 18px;display:flex;justify-content:space-between;align-items:flex-end">
+                <div>
+                  <div class="k">{{ home.activeRef }}</div>
+                  <h2 style="margin:6px 0 0;font-size:30px">{{ track.stageLabel }}</h2>
+                </div>
+                <div style="text-align:right">
+                  <div style="font:600 38px/1 var(--font-heading);color:var(--color-accent-700)">{{ track.eta }}</div>
+                  <div class="k">min</div>
+                </div>
+              </div>
+
+              <sc-if value="{{ track.isMap }}" hint-placeholder-val="{{ false }}">
+                <div class="blueprint" style="margin:18px 18px 0;height:262px;position:relative;overflow:hidden;background:var(--color-neutral-100);background-image:linear-gradient(to right,color-mix(in srgb,#1d1f20 7%,transparent) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in srgb,#1d1f20 7%,transparent) 1px,transparent 1px);background-size:26px 26px">
+                  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                  <svg viewBox="0 0 340 262" style="position:absolute;inset:0;width:100%;height:100%">
+                    <path d="M0 196 L92 196 L92 120 L206 120 L206 62 L340 62" stroke="var(--color-neutral-400)" stroke-width="9" fill="none"/>
+                    <path d="M0 108 L128 108 L128 240" stroke="var(--color-neutral-400)" stroke-width="7" fill="none"/>
+                    <path d="M40 232 L40 196 L92 196 L92 120 L206 120 L206 62 L296 62" stroke="var(--color-accent)" stroke-width="2.5" stroke-dasharray="7 5" fill="none"/>
+                    <circle cx="40" cy="232" r="5" fill="var(--color-accent-900)"/>
+                    <circle cx="296" cy="62" r="5" fill="none" stroke="var(--color-accent-900)" stroke-width="2"/>
+                  </svg>
+                  <div style="position:absolute;left:{{ track.dotX }};top:{{ track.dotY }};transform:translate(-50%,-50%);width:30px;height:30px;background:var(--color-accent);display:flex;align-items:center;justify-content:center;transition:left .9s linear,top .9s linear">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M2 7h11v9H2zM13 10h5l3 3v3h-8z"/><circle cx="6" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>
+                  </div>
+                  <div class="mono" style="position:absolute;bottom:8px;left:10px;color:var(--color-neutral-700)">LS11 → LS1 · 4.2 km left</div>
+                </div>
+              </sc-if>
+
+              <div style="padding:20px 18px 0">
+                <div class="k" style="margin-bottom:2px">Progress</div>
+                <sc-for list="{{ track.steps }}" as="s" hint-placeholder-count="4">
+                  <div style="display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--color-divider)">
+                    <div style="width:26px;height:26px;flex:none;border:1px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};display:flex;align-items:center;justify-content:center;font:500 11px ui-monospace,Menlo,monospace">{{ s.n }}</div>
+                    <div style="flex:1">
+                      <div style="font:600 17px/1.15 var(--font-heading);color:{{ s.title }}">{{ s.label }}</div>
+                      <div class="text-muted" style="font-size:12.5px">{{ s.note }}</div>
+                    </div>
+                    <span class="mono text-muted">{{ s.time }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="padding:20px 18px 0">
+                <div class="blueprint" style="padding:14px;display:flex;gap:12px;align-items:center">
+                  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                  <div style="width:44px;height:44px;flex:none;background:var(--color-neutral-300);display:flex;align-items:center;justify-content:center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-700)" stroke-width="1.5"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1.6-3.6 4.2-5 7.5-5s5.9 1.4 7.5 5"/></svg>
+                  </div>
+                  <div style="flex:1">
+                    <div style="font:600 17px/1.1 var(--font-heading)">Ray Okafor</div>
+                    <div class="text-muted" style="font-size:12px">Your courier · 4.9 ★ · 1,208 drops</div>
+                  </div>
+                  <div onClick="{{ nav.chat }}" class="btn btn-secondary" style="cursor:pointer">Message</div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ORDERS -->
+          <sc-if value="{{ at.orders }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:{{ ui.padTop }} 0 26px">
+              <div style="padding:0 18px">
+                <h2 style="margin:0;font-size:30px">Your shipments</h2>
+                <div class="dv-row" style="border-bottom:0">
+                  <span class="text-muted" style="font-size:13px">This year</span>
+                  <span class="mono">{{ orders.summary }}</span>
+                </div>
+              </div>
+              <div style="border-top:1px solid var(--color-divider)">
+                <sc-for list="{{ orders.list }}" as="o" hint-placeholder-count="5">
+                  <div onClick="{{ o.onTap }}" style="padding:15px 18px;border-bottom:1px solid var(--color-divider);cursor:pointer">
+                    <div style="display:flex;justify-content:space-between;gap:10px">
+                      <div style="font:600 18px/1.15 var(--font-heading)">{{ o.title }}</div>
+                      <div style="font:600 16px/1.2 var(--font-heading)">{{ o.price }}</div>
+                    </div>
+                    <div class="text-muted" style="font-size:12.5px;margin-top:3px">{{ o.leg }}</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:9px">
+                      <span class="tag" style="background:{{ o.tagBg }};color:{{ o.tagFg }}">{{ o.status }}</span>
+                      <span class="mono text-muted">{{ o.date }} · {{ o.ref }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- PROFILE -->
+          <sc-if value="{{ at.profile }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:{{ ui.padTop }} 0 26px">
+              <div style="padding:0 18px">
+                <h2 style="margin:0;font-size:30px">{{ profile.name }}</h2>
+                <div class="mono text-muted" style="margin-top:4px">{{ profile.sub }}</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--color-divider);margin:18px 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+                <sc-for list="{{ profile.stats }}" as="s" hint-placeholder-count="3">
+                  <div style="background:var(--color-bg);padding:14px 12px">
+                    <div style="font:600 24px/1 var(--font-heading)">{{ s.v }}</div>
+                    <div class="text-muted" style="font-size:11px;margin-top:4px">{{ s.k }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="padding:0 18px">
+                <sc-for list="{{ profile.rows }}" as="r" hint-placeholder-count="6">
+                  <div onClick="{{ r.onTap }}" class="dv-row" style="cursor:pointer">
+                    <div>
+                      <div style="font-size:14.5px">{{ r.label }}</div>
+                      <div class="text-muted" style="font-size:12px">{{ r.note }}</div>
+                    </div>
+                    <span class="mono" style="color:var(--color-accent-700)">{{ r.val }}</span>
+                  </div>
+                </sc-for>
+                <button class="btn btn-ghost" style="width:100%;margin-top:18px" onClick="{{ nav.onboarding }}">Sign out</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- CHAT -->
+          <sc-if value="{{ at.chat }}" hint-placeholder-val="{{ false }}">
+            <div style="min-height:100%;display:flex;flex-direction:column;padding-top:{{ ui.padTop }}">
+              <div style="padding:0 18px 12px;border-bottom:1px solid var(--color-divider);display:flex;justify-content:space-between;align-items:flex-end">
+                <div>
+                  <div class="k">Usually replies in 2 min</div>
+                  <h3 style="margin:4px 0 0">Support</h3>
+                </div>
+                <div onClick="{{ nav.back }}" class="mono" style="color:var(--color-accent-700);cursor:pointer">Close</div>
+              </div>
+              <div style="flex:1;padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ chat.msgs }}" as="m" hint-placeholder-count="3">
+                  <div style="align-self:{{ m.align }};max-width:78%;padding:10px 13px;background:{{ m.bg }};color:{{ m.fg }};border:1px solid {{ m.bd }};font-size:14px;line-height:1.45">{{ m.text }}</div>
+                </sc-for>
+              </div>
+              <div style="padding:0 18px 8px;display:flex;gap:6px;flex-wrap:wrap">
+                <sc-for list="{{ chat.quick }}" as="q" hint-placeholder-count="3">
+                  <div onClick="{{ q.onTap }}" class="tag tag-outline" style="cursor:pointer">{{ q.label }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:8px;padding:12px 18px 20px;border-top:1px solid var(--color-divider);background:var(--color-bg)">
+                <input value="{{ chat.draft }}" onChange="{{ chat.setDraft }}" onKeyDown="{{ chat.onKey }}" placeholder="Write a message" style="flex:1;border:1px solid var(--color-divider);background:var(--color-neutral-100);padding:11px 12px;font:400 15px var(--font-body);outline:none;color:var(--color-text)">
+                <button class="btn btn-primary" style="width:52px" onClick="{{ chat.send }}">→</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- COURIER JOBS -->
+          <sc-if value="{{ at.jobs }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:{{ ui.padTop }} 0 26px">
+              <div style="padding:0 18px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-end">
+                  <div>
+                    <div class="k">Leeds · shift ends 18:00</div>
+                    <h2 style="margin:6px 0 0;font-size:30px">Jobs near you</h2>
+                  </div>
+                  <div onClick="{{ jobs.toggleOnline }}" style="cursor:pointer;text-align:right">
+                    <div class="mono" style="color:{{ jobs.onlineFg }}">{{ jobs.onlineLabel }}</div>
+                    <div style="width:44px;height:22px;border:1px solid var(--color-divider);display:flex;padding:2px;margin-top:5px;background:{{ jobs.onlineBg }};justify-content:{{ jobs.onlinePos }}">
+                      <div style="width:16px;height:16px;background:{{ jobs.onlineKnob }}"></div>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--color-divider);margin-top:18px;border:1px solid var(--color-divider)">
+                  <sc-for list="{{ jobs.stats }}" as="s" hint-placeholder-count="3">
+                    <div style="background:var(--color-bg);padding:12px">
+                      <div style="font:600 21px/1 var(--font-heading)">{{ s.v }}</div>
+                      <div class="text-muted" style="font-size:10.5px;margin-top:3px">{{ s.k }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="margin-top:18px;border-top:1px solid var(--color-divider)">
+                <sc-for list="{{ jobs.list }}" as="j" hint-placeholder-count="3">
+                  <div style="padding:15px 18px;border-bottom:1px solid var(--color-divider)">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                      <div>
+                        <div style="display:flex;gap:8px;align-items:center">
+                          <span class="tag tag-accent">{{ j.kind }}</span>
+                          <span class="mono text-muted">{{ j.ref }}</span>
+                        </div>
+                        <div style="font:600 20px/1.1 var(--font-heading);margin-top:8px">{{ j.pickup }}</div>
+                        <div class="text-muted" style="font-size:12.5px;margin-top:2px">→ {{ j.drop }}</div>
+                      </div>
+                      <div style="text-align:right">
+                        <div style="font:600 22px/1 var(--font-heading)">{{ j.pay }}</div>
+                        <div class="mono text-muted" style="margin-top:4px">{{ j.dist }}</div>
+                      </div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:12px">
+                      <button class="btn btn-secondary" style="flex:1" onClick="{{ j.onSkip }}">Pass</button>
+                      <button class="btn btn-primary blueprint" style="flex:2" onClick="{{ j.onAccept }}">
+                        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                        Accept · {{ j.window }}
+                      </button>
+                    </div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ jobs.empty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:46px 24px;text-align:center">
+                    <div class="k">Queue clear</div>
+                    <p class="text-muted" style="font-size:13px;margin-top:8px">No jobs left in this zone. New ones land every few minutes.</p>
+                    <button class="btn btn-secondary" onClick="{{ jobs.refill }}">Refresh queue</button>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- COURIER DELIVERY -->
+          <sc-if value="{{ at.delivery }}" hint-placeholder-val="{{ false }}">
+            <div style="min-height:100%;display:flex;flex-direction:column;padding-top:{{ ui.padTop }}">
+              <div style="padding:0 18px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-end">
+                  <div>
+                    <div class="k">Active job · {{ del.ref }}</div>
+                    <h2 style="margin:6px 0 0;font-size:30px">{{ del.title }}</h2>
+                  </div>
+                  <div class="mono text-muted">{{ del.stepLabel }}</div>
+                </div>
+                <div style="display:flex;gap:3px;margin-top:14px">
+                  <sc-for list="{{ del.dots }}" as="d" hint-placeholder-count="4">
+                    <div style="flex:1;height:3px;background:{{ d.fill }}"></div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div class="blueprint" style="margin:18px 18px 0;padding:16px">
+                <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                <div class="k">{{ del.addrKicker }}</div>
+                <div style="font:600 22px/1.15 var(--font-heading);margin-top:6px">{{ del.addr }}</div>
+                <p class="text-muted" style="font-size:12.5px;margin:8px 0 0;text-wrap:pretty">{{ del.note }}</p>
+                <div style="display:flex;gap:8px;margin-top:14px">
+                  <button class="btn btn-secondary" style="flex:1">Navigate</button>
+                  <button class="btn btn-secondary" style="flex:1">Call</button>
+                </div>
+              </div>
+
+              <sc-if value="{{ del.isScan }}" hint-placeholder-val="{{ false }}">
+                <div class="blueprint" style="margin:18px 18px 0;height:172px;display:flex;align-items:center;justify-content:center;background:var(--color-neutral-100)">
+                  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                  <div style="text-align:center">
+                    <div style="width:150px;height:56px;margin:0 auto;background:repeating-linear-gradient(to right,var(--color-text) 0 2px,transparent 2px 5px,var(--color-text) 5px 6px,transparent 6px 11px)"></div>
+                    <div class="mono" style="margin-top:12px;color:var(--color-accent-700)">{{ del.barcode }}</div>
+                    <div class="text-muted" style="font-size:11.5px;margin-top:4px">Hold steady over the label</div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ del.isProof }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:18px 18px 0">
+                  <div class="k">Proof of delivery</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+                    <sc-for list="{{ del.proofs }}" as="p" hint-placeholder-count="2">
+                      <div onClick="{{ p.onTap }}" style="border:1px solid {{ p.bd }};background:{{ p.bg }};padding:16px 12px;cursor:pointer;min-height:92px;display:flex;flex-direction:column;justify-content:space-between">
+                        <span class="mono" style="color:{{ p.tick }}">{{ p.mark }}</span>
+                        <div>
+                          <div style="font:600 17px/1.1 var(--font-heading)">{{ p.label }}</div>
+                          <div class="text-muted" style="font-size:11px;margin-top:3px">{{ p.note }}</div>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div class="field" style="margin-top:16px">
+                    <label style="font-size:12px">Received by</label>
+                    <input class="input" style="font-size:16px" value="{{ del.receiver }}" onChange="{{ del.setReceiver }}" placeholder="Name on the door">
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ del.isDone }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:18px 18px 0">
+                  <div class="blueprint" style="padding:18px;background:var(--color-accent-900);border-color:var(--color-accent-900);color:#fff">
+                    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                    <div class="k" style="color:var(--color-accent-300)">Delivered {{ del.stamp }}</div>
+                    <div style="font:600 30px/1.05 var(--font-heading);margin-top:8px">{{ del.payout }} added to today</div>
+                    <div class="mono" style="color:var(--color-accent-200);margin-top:8px">{{ del.ref }} · signed by {{ del.receiverOut }}</div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <div style="flex:1;min-height:18px"></div>
+              <div style="padding:18px;border-top:1px solid var(--color-divider);background:var(--color-bg)">
+                <button class="btn btn-primary blueprint" style="width:100%;height:52px;font-size:16px" onClick="{{ del.next }}">
+                  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+                  {{ del.cta }}
+                </button>
+              </div>
+            </div>
+          </sc-if>
+
+        </div>
+
+        <sc-if value="{{ at.bottomtabs }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:none;border-top:1px solid var(--color-divider);background:var(--color-bg);display:grid;grid-template-columns:{{ ui.tabCols }};padding:9px 0 30px">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+              <div onClick="{{ t.onTap }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;color:{{ t.color }}">
+                <div style="width:22px;height:22px">{{ t.icon }}</div>
+                <div style="font:600 9.5px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase">{{ t.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+      </div>
+    </x-import>
+  </div>
+
+  <div style="width:288px;flex:none;position:sticky;top:36px">
+    <div class="blueprint" style="padding:18px;background:var(--color-neutral-100)">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div class="k">Brief · read me</div>
+      <h4 style="margin:8px 0 10px">What I assumed</h4>
+      <p class="text-muted" style="font-size:12.5px;text-wrap:pretty">Same-day parcel courier, one city, two apps in one shell: a sender flow (send → track → history) and a courier flow (accept → pickup → scan → proof). Copy is plain and friendly; every number is illustrative.</p>
+      <h4 style="margin:16px 0 8px">Design reasoning</h4>
+      <p class="text-muted" style="font-size:12.5px;text-wrap:pretty">Industry is a wireframe system, so the app reads as a technical instrument: hairline blueprint frames with registration marks, condensed headings, one steel accent, and the deep accent field reserved for the two moments that matter — the live shipment and a completed delivery. No filled cards, no second colour.</p>
+      <h4 style="margin:16px 0 8px">Variations live in Tweaks</h4>
+      <p class="text-muted" style="font-size:12.5px;text-wrap:pretty">The four axes you picked are switches, not separate mockups — home layout, tracking treatment, checkout flow and navigation pattern. Flip them in the Tweaks panel and the whole prototype stays working.</p>
+      <h4 style="margin:16px 0 8px">Next steps</h4>
+      <p class="text-muted" style="font-size:12.5px;margin-bottom:0;text-wrap:pretty">Point me at the Deeliva source (I couldn’t reach the attached folder) and I’ll align naming, service tiers and pricing. Then: multi-parcel manifests, courier earnings, and failed-delivery paths.</p>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1020,&quot;height&quot;:980},&quot;navPattern&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tabs&quot;,&quot;top&quot;],&quot;default&quot;:&quot;tabs&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Variations&quot;},&quot;homeLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cards&quot;,&quot;grid&quot;],&quot;default&quot;:&quot;cards&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Variations&quot;},&quot;trackingStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;map&quot;,&quot;timeline&quot;],&quot;default&quot;:&quot;map&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Variations&quot;},&quot;checkoutFlow&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;stepped&quot;,&quot;single&quot;],&quot;default&quot;:&quot;stepped&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Variations&quot;}}">
+const A = 'var(--color-accent)', A7 = 'var(--color-accent-700)', A9 = 'var(--color-accent-900)';
+const A1 = 'var(--color-accent-100)', A3 = 'var(--color-accent-300)';
+const DIV = 'var(--color-divider)', BG = 'var(--color-bg)', MUT = 'var(--color-neutral-500)';
+const N2 = 'var(--color-neutral-200)', N3 = 'var(--color-neutral-300)';
+
+const ICONS = {
+  send: 'M3 8l9-5 9 5v8l-9 5-9-5V8zM3 8l9 5 9-5M12 13v8',
+  track: 'M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z',
+  orders: 'M4 4h16v16H4zM8 9h8M8 13h8M8 17h5',
+  profile: 'M12 8.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM4.5 21c1.6-3.6 4.2-5 7.5-5s5.9 1.4 7.5 5',
+  jobs: 'M4 7h16v13H4zM9 7V4h6v3',
+  active: 'M2 7h11v9H2zM13 10h5l3 3v3h-8z',
+};
+
+const SERVICES = [
+  { id: 'sameday', name: 'Same day', window: 'Collected by 12:00 · dropped by 18:00', p: 14.4 },
+  { id: 'express', name: 'Express 2 hr', window: 'Direct, no depot · live tracking', p: 22.5 },
+  { id: 'next', name: 'Next morning', window: 'Before 10:00 tomorrow', p: 8.9 },
+];
+
+const ALL_RESULTS = [
+  { title: 'Rolled drawings tube', leg: 'Barrow Works → Wellington Pl', status: 'In transit', ref: 'DLV-4471', date: '3 Sep', speed: 'Express', size: 'Large' },
+  { title: 'Two sample boxes', leg: 'Barrow Works → Kirkstall Rd', status: 'Delivered', ref: 'DLV-4390', date: '1 Sep', speed: 'Same day', size: 'Medium' },
+  { title: 'Signed contracts', leg: 'Home → Park Sq East', status: 'Delivered', ref: 'DLV-4288', date: '28 Aug', speed: 'Express', size: 'Small' },
+  { title: 'Return: faulty sensor', leg: 'Holbeck → Supplier depot', status: 'Collected', ref: 'DLV-4210', date: '26 Aug', speed: 'Next day', size: 'Small' },
+  { title: 'Trade counter order', leg: 'Armley → Bramley', status: 'Delivered', ref: 'DLV-4155', date: '22 Aug', speed: 'Same day', size: 'Large' },
+];
+
+const ORDERS = [
+  { title: 'Rolled drawings tube', leg: 'Barrow Works → Wellington Pl', price: '£22.50', status: 'In transit', ref: 'DLV-4471', date: '3 Sep' },
+  { title: 'Two sample boxes', leg: 'Barrow Works → Kirkstall Rd', price: '£14.40', status: 'Delivered', ref: 'DLV-4390', date: '1 Sep' },
+  { title: 'Signed contracts', leg: 'Home → Park Sq East', price: '£22.50', status: 'Delivered', ref: 'DLV-4288', date: '28 Aug' },
+  { title: 'Return: faulty sensor', leg: 'Holbeck → Supplier depot', price: '£8.90', status: 'Refunded', ref: 'DLV-4210', date: '26 Aug' },
+  { title: 'Trade counter order', leg: 'Armley → Bramley', price: '£14.40', status: 'Delivered', ref: 'DLV-4155', date: '22 Aug' },
+];
+
+const JOBS = [
+  { ref: 'DLV-4471', kind: 'Express', pickup: 'Barrow Works, Unit 4', drop: 'Wellington Pl, LS1', pay: '£9.20', dist: '4.2 km · 14 min', window: 'pick up by 11:40' },
+  { ref: 'DLV-4482', kind: 'Same day', pickup: 'Crown Point Retail', drop: 'Chapel Allerton', pay: '£6.80', dist: '5.9 km · 19 min', window: 'pick up by 13:00' },
+  { ref: 'DLV-4490', kind: 'Bulk · 3 parcels', pickup: 'Holbeck depot', drop: 'Three stops, LS6', pay: '£17.50', dist: '11.4 km · 38 min', window: 'pick up by 14:15' },
+];
+
+const DEL_STEPS = [
+  { title: 'Head to pickup', cta: 'I have arrived', kicker: 'Pickup', addr: 'Barrow Works, Unit 4, LS11 5DZ', note: 'Loading bay at the rear. Ask for Nadia on the mezzanine — buzzer 4 if the shutter is down.' },
+  { title: 'Scan the parcel', cta: 'Confirm scan', kicker: 'Pickup', addr: 'Barrow Works, Unit 4, LS11 5DZ', note: 'One tube, 2.5 kg. Check the label matches DLV-4471 before you leave.' },
+  { title: 'Drive to drop-off', cta: 'I have arrived', kicker: 'Drop-off', addr: 'Wellington Place, 6th floor, LS1 4AP', note: 'Reception closes at 17:30. Recipient is Tom Vance, ext. 214.' },
+  { title: 'Proof of delivery', cta: 'Complete delivery', kicker: 'Drop-off', addr: 'Wellington Place, 6th floor, LS1 4AP', note: 'Photo or signature — either is fine, both if the parcel is left with reception.' },
+  { title: 'Job complete', cta: 'Back to jobs', kicker: 'Drop-off', addr: 'Wellington Place, 6th floor, LS1 4AP', note: 'Nice work. Your next job is already in the queue.' },
+];
+
+const TRACK = [
+  { label: 'Booked', note: 'Payment authorised', time: '09:41' },
+  { label: 'Collected', note: 'Ray scanned your parcel', time: '10:12' },
+  { label: 'On the way', note: 'Direct route, no depot', time: '10:26' },
+  { label: 'Delivered', note: 'Photo proof on arrival', time: '—' },
+];
+
+const DOT_PATH = [[40, 232], [92, 196], [92, 120], [206, 120], [296, 62]];
+
+class Component extends DCLogic {
+  state = {
+    role: 'customer', screen: 'onboarding', prev: 'home', ob: 0,
+    phone: '', pickup: '', notes: '',
+    q: '', filters: [],
+    service: 'express', weight: 5, cover: true,
+    cart: [{ id: 1, name: 'Rolled drawings tube', meta: 'Express 2 hr · 2.5 kg · cover £500', price: 22.5 }],
+    coStep: 0, window: 1, card: 0, drop: 'Wellington Place, 6th floor, LS1 4AP',
+    trackStage: 2, eta: 26, tick: 0,
+    msgs: [
+      { from: 'them', text: 'Hi Nadia — Ray is two streets away. Anything he should know?' },
+      { from: 'me', text: 'Reception closes at 17:30, ask for Tom on the 6th.' },
+      { from: 'them', text: 'Passed it on. He will call from the door.' },
+    ],
+    draft: '',
+    online: true, jobs: JOBS, delStep: 0, receiver: '', proof: 'photo',
+  };
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.setState(s => {
+        if (s.trackStage >= 3) return { tick: s.tick + 1 };
+        const eta = Math.max(1, s.eta - 1);
+        return { eta, tick: s.tick + 1, trackStage: eta <= 4 ? 3 : s.trackStage };
+      });
+    }, 2600);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  go = (screen) => this.setState(s => ({ screen, prev: s.screen }));
+  money = (n) => '£' + n.toFixed(2);
+
+  svc() { return SERVICES.find(s => s.id === this.state.service) || SERVICES[1]; }
+  detailTotal() {
+    const w = this.state.weight;
+    return this.svc().p + (w > 10 ? 4 : 0) + (this.state.cover ? 1.8 : 0);
+  }
+  cartTotal() { return this.state.cart.reduce((a, b) => a + b.price, 0); }
+
+  navPattern() { return this.props.navPattern ?? 'tabs'; }
+  homeLayout() { return this.props.homeLayout ?? 'cards'; }
+  trackingStyle() { return this.props.trackingStyle ?? 'map'; }
+  checkoutFlow() { return this.props.checkoutFlow ?? 'stepped'; }
+
+  icon(path) {
+    return React.createElement('svg', { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }, React.createElement('path', { d: path }));
+  }
+
+  renderVals() {
+    const st = this.state;
+    const cust = st.role === 'customer';
+    const chromeless = st.screen === 'onboarding' || st.screen === 'chat' || st.screen === 'delivery';
+    const topnav = !chromeless && this.navPattern() === 'top';
+    const bottomtabs = !chromeless && this.navPattern() === 'tabs';
+
+    const at = {
+      topnav, bottomtabs,
+      onboarding: st.screen === 'onboarding', home: st.screen === 'home', search: st.screen === 'search',
+      detail: st.screen === 'detail', checkout: st.screen === 'checkout', tracking: st.screen === 'tracking',
+      orders: st.screen === 'orders', profile: st.screen === 'profile', chat: st.screen === 'chat',
+      jobs: st.screen === 'jobs', delivery: st.screen === 'delivery',
+    };
+
+    const tabDefs = cust
+      ? [{ id: 'home', label: 'Send', icon: ICONS.send }, { id: 'tracking', label: 'Track', icon: ICONS.track }, { id: 'orders', label: 'Orders', icon: ICONS.orders }, { id: 'profile', label: 'You', icon: ICONS.profile }]
+      : [{ id: 'jobs', label: 'Jobs', icon: ICONS.jobs }, { id: 'delivery', label: 'Active', icon: ICONS.active }, { id: 'profile', label: 'You', icon: ICONS.profile }];
+    const tabs = tabDefs.map(t => ({
+      label: t.label, icon: this.icon(t.icon), onTap: () => this.go(t.id),
+      color: st.screen === t.id ? A7 : MUT, line: st.screen === t.id ? A : 'transparent',
+    }));
+
+    const idx = cust
+      ? [['onboarding', 'Onboarding'], ['home', 'Home'], ['search', 'Search + filters'], ['detail', 'Parcel detail'], ['checkout', 'Checkout'], ['tracking', 'Live tracking'], ['orders', 'Order history'], ['profile', 'Profile'], ['chat', 'Support chat']]
+      : [['jobs', 'Job list'], ['delivery', 'Delivery flow'], ['profile', 'Profile'], ['chat', 'Support chat']];
+
+    const ob = ['Send a parcel across town today.', 'Where do we collect?', 'You are set up.'];
+    const obSub = ['Book in under a minute, watch it move, and know exactly when it lands.', 'This becomes your default pickup — you can add more later.', 'One tap from here books your first shipment.'];
+
+    const filterOn = (f) => st.filters.includes(f);
+    const results = ALL_RESULTS.filter(r => {
+      const q = st.q.trim().toLowerCase();
+      const okQ = !q || (r.title + r.leg + r.ref).toLowerCase().includes(q);
+      const speeds = st.filters.filter(f => ['Express', 'Same day', 'Next day'].includes(f));
+      const states = st.filters.filter(f => ['In transit', 'Delivered'].includes(f));
+      return okQ && (!speeds.length || speeds.includes(r.speed)) && (!states.length || states.includes(r.status));
+    });
+
+    const coSteps = this.checkoutFlow() === 'stepped';
+    const coHeads = ['Your shipment', 'When and where', 'Pay and book'];
+    const lines = [
+      { k: 'Carriage', v: this.money(this.cartTotal() - 1.8) },
+      { k: 'Cover to £500', v: '£1.80' },
+      { k: 'Congestion surcharge', v: '£0.00' },
+      { k: 'Total', v: this.money(this.cartTotal()), big: true },
+    ];
+
+    const dot = DOT_PATH[Math.min(DOT_PATH.length - 1, st.trackStage + (st.tick % 2))];
+
+    const del = DEL_STEPS[st.delStep];
+
+    return {
+      at, tabs,
+      screenIndex: idx.map((p, i) => ({ n: String(i + 1).padStart(2, '0'), label: p[1], on: st.screen === p[0] ? '1' : '0', onTap: () => this.go(p[0]) })),
+      ui: {
+        padTop: topnav ? '18px' : '58px',
+        tabCols: cust ? 'repeat(4,1fr)' : 'repeat(3,1fr)',
+        custBg: cust ? A : 'transparent', custFg: cust ? '#fff' : 'var(--color-text)',
+        courBg: cust ? 'transparent' : A, courFg: cust ? 'var(--color-text)' : '#fff',
+      },
+      nav: {
+        back: () => this.go(st.prev === st.screen ? 'home' : st.prev),
+        home: () => this.go('home'), chat: () => this.go('chat'), tracking: () => this.go('tracking'),
+        detail: () => this.go('detail'), onboarding: () => this.go('onboarding'),
+        asCustomer: () => this.setState({ role: 'customer', screen: 'home' }),
+        asCourier: () => this.setState({ role: 'courier', screen: 'jobs' }),
+      },
+      ob: {
+        title: ob[st.ob], sub: obSub[st.ob],
+        dots: [0, 1, 2].map(i => ({ fill: i <= st.ob ? A : DIV })),
+        isPhone: st.ob === 0, isPickup: st.ob === 1, isDone: st.ob === 2,
+        phone: st.phone, pickup: st.pickup, notes: st.notes,
+        pickupOut: st.pickup || 'Barrow Works, Unit 4, LS11 5DZ',
+        notesOut: st.notes || 'Loading bay, buzzer 4',
+        setPhone: e => this.setState({ phone: e.target.value }),
+        setPickup: e => this.setState({ pickup: e.target.value }),
+        setNotes: e => this.setState({ notes: e.target.value }),
+        suggest: ['Barrow Works, Unit 4', 'Home · 12 Cardigan Rd', 'Holbeck depot'].map(l => ({ label: l, onTap: () => this.setState({ pickup: l }) })),
+        cta: st.ob === 2 ? 'Book my first parcel' : 'Continue',
+        next: () => st.ob === 2 ? this.go('home') : this.setState({ ob: st.ob + 1 }),
+        skip: () => this.go('home'),
+      },
+      home: {
+        hasActive: true, activeRef: 'DLV-4471 · Rolled drawings tube',
+        isGrid: this.homeLayout() === 'grid', isCards: this.homeLayout() === 'cards',
+        cells: [
+          { num: '01', title: 'New parcel', sub: 'Measure, price and book', onTap: () => this.go('detail') },
+          { num: '02', title: 'Track', sub: 'Follow the live route', onTap: () => this.go('tracking') },
+          { num: '03', title: 'Find a shipment', sub: 'Search past and current', onTap: () => this.go('search') },
+          { num: '04', title: 'Get help', sub: 'Chat with support', onTap: () => this.go('chat') },
+        ],
+        routes: [
+          { name: 'Works → Wellington Pl', leg: 'LS11 → LS1 · 4.2 km', price: 'from £22.50', onTap: () => this.go('detail') },
+          { name: 'Works → Kirkstall Rd', leg: 'LS11 → LS4 · 6.1 km', price: 'from £14.40', onTap: () => this.go('detail') },
+        ],
+      },
+      search: {
+        q: st.q, setQ: e => this.setState({ q: e.target.value }),
+        clear: () => this.setState({ filters: [], q: '' }),
+        chips: ['Express', 'Same day', 'Next day', 'In transit', 'Delivered'].map(f => ({
+          label: f, bg: filterOn(f) ? A : 'transparent', fg: filterOn(f) ? '#fff' : A7, bd: filterOn(f) ? A : DIV,
+          onTap: () => this.setState(s => ({ filters: s.filters.includes(f) ? s.filters.filter(x => x !== f) : s.filters.concat(f) })),
+        })),
+        count: results.length, empty: results.length === 0,
+        results: results.map(r => ({ ...r, onTap: () => this.go(r.status === 'In transit' ? 'tracking' : 'detail') })),
+      },
+      detail: {
+        title: 'Rolled drawings tube', blurb: 'Long, light and awkward — couriers carry it upright, so it goes direct with no depot handling.',
+        specs: [{ k: 'Type', v: 'Tube' }, { k: 'Length', v: '910 mm' }, { k: 'Diameter', v: '110 mm' }, { k: 'Girth class', v: 'C · oversize' }],
+        weight: st.weight.toFixed(1), weightRaw: st.weight,
+        setWeight: e => this.setState({ weight: Number(e.target.value) }),
+        services: SERVICES.map(s => ({
+          name: s.name, window: s.window, price: this.money(s.p),
+          bd: st.service === s.id ? A : DIV, bg: st.service === s.id ? A1 : 'transparent',
+          mark: st.service === s.id ? 'SELECTED' : 'select', tick: st.service === s.id ? A7 : MUT,
+          onTap: () => this.setState({ service: s.id }),
+        })),
+        coverBg: st.cover ? A1 : 'transparent', coverPos: st.cover ? 'flex-end' : 'flex-start',
+        coverKnob: st.cover ? A : N3,
+        toggleCover: () => this.setState({ cover: !st.cover }),
+        total: this.money(this.detailTotal()),
+        addToCart: () => this.setState(s => ({
+          screen: 'checkout', prev: 'detail', coStep: 0,
+          cart: [{ id: Date.now(), name: 'Rolled drawings tube', meta: this.svc().name + ' · ' + s.weight.toFixed(1) + ' kg' + (s.cover ? ' · cover £500' : ''), price: this.detailTotal() }],
+        })),
+      },
+      co: {
+        isStepped: coSteps,
+        heading: coSteps ? coHeads[st.coStep] : 'Checkout',
+        stepLabel: coSteps ? 'Step ' + (st.coStep + 1) + ' of 3' : this.money(this.cartTotal()),
+        dots: [0, 1, 2].map(i => ({ fill: i <= st.coStep ? A : DIV })),
+        showParcels: !coSteps || st.coStep === 0,
+        showWindow: !coSteps || st.coStep === 1,
+        showPay: !coSteps || st.coStep === 2,
+        items: st.cart.map((c, i) => ({ name: c.name, meta: c.meta, price: this.money(c.price), onRemove: () => this.setState(s => ({ cart: s.cart.filter((_, j) => j !== i) })) })),
+        windows: [
+          { label: 'Next 60 minutes', note: 'Courier assigned on booking' },
+          { label: '11:00 – 13:00', note: 'Most popular · no surcharge' },
+          { label: '16:00 – 18:00', note: 'Last collection of the day' },
+        ].map((w, i) => ({
+          label: w.label, note: w.note, bd: st.window === i ? A : DIV, bg: st.window === i ? A1 : 'transparent',
+          mark: st.window === i ? 'SELECTED' : 'select', tick: st.window === i ? A7 : MUT,
+          onTap: () => this.setState({ window: i }),
+        })),
+        drop: st.drop, setDrop: e => this.setState({ drop: e.target.value }),
+        cards: [{ name: 'Business card', num: '•••• 4417' }, { name: 'Deeliva credit', num: '£38.20 left' }].map((c, i) => ({
+          name: c.name, num: c.num, bd: st.card === i ? A : DIV, bg: st.card === i ? A1 : 'transparent',
+          mark: st.card === i ? 'SELECTED' : 'select', tick: st.card === i ? A7 : MUT,
+          onTap: () => this.setState({ card: i }),
+        })),
+        lines: lines.map(l => ({ k: l.k, v: l.v, size: l.big ? '15px' : '11px', color: l.big ? 'var(--color-text)' : MUT, rule: l.big ? 'transparent' : DIV })),
+        cta: coSteps && st.coStep < 2 ? 'Continue' : 'Book · ' + this.money(this.cartTotal()),
+        next: () => (coSteps && st.coStep < 2)
+          ? this.setState({ coStep: st.coStep + 1 })
+          : this.setState({ screen: 'tracking', prev: 'checkout', trackStage: 1, eta: 34, coStep: 0 }),
+      },
+      track: {
+        isMap: this.trackingStyle() === 'map',
+        eta: st.trackStage >= 3 ? '0' : String(st.eta),
+        stageLabel: TRACK[st.trackStage].label === 'Delivered' ? 'Delivered' : ['Booked, finding a courier', 'Ray is on his way to you', 'Out for delivery', 'Delivered'][st.trackStage],
+        bars: [0, 1, 2, 3].map(i => ({ fill: i <= st.trackStage ? '#fff' : 'rgba(255,255,255,0.28)' })),
+        dotX: dot[0] / 340 * 100 + '%', dotY: dot[1] / 262 * 100 + '%',
+        steps: TRACK.map((s, i) => ({
+          n: String(i + 1).padStart(2, '0'), label: s.label, note: s.note,
+          time: i === st.trackStage && i < 3 ? 'now' : s.time,
+          bd: i <= st.trackStage ? A : DIV, bg: i < st.trackStage ? A : (i === st.trackStage ? A1 : 'transparent'),
+          fg: i < st.trackStage ? '#fff' : A7,
+          title: i <= st.trackStage ? 'var(--color-text)' : MUT,
+        })),
+      },
+      orders: {
+        summary: ORDERS.length + ' shipments · £83.10',
+        list: ORDERS.map(o => ({
+          ...o, onTap: () => this.go(o.status === 'In transit' ? 'tracking' : 'detail'),
+          tagBg: o.status === 'In transit' ? A9 : (o.status === 'Refunded' ? N2 : A1),
+          tagFg: o.status === 'In transit' ? '#fff' : A7,
+        })),
+      },
+      profile: {
+        name: st.role === 'customer' ? 'Nadia Whitcombe' : 'Ray Okafor',
+        sub: st.role === 'customer' ? 'Barrow Works · business account' : 'Courier #2214 · Leeds zone',
+        stats: st.role === 'customer'
+          ? [{ v: '48', k: 'parcels sent' }, { v: '£38', k: 'credit left' }, { v: '100%', k: 'on time' }]
+          : [{ v: '1,208', k: 'drops' }, { v: '4.9', k: 'rating' }, { v: '£142', k: 'this week' }],
+        rows: (st.role === 'customer' ? [
+          { label: 'Addresses', note: '3 saved · Barrow Works default', val: 'edit' },
+          { label: 'Payment', note: 'Business card •••• 4417', val: 'edit' },
+          { label: 'Notifications', note: 'Texts on pickup and drop-off', val: 'on' },
+          { label: 'Invoices', note: 'Monthly, sent to accounts@', val: 'view' },
+          { label: 'Help centre', note: 'Guides, sizes and prohibited items', val: 'open' },
+          { label: 'Talk to us', note: 'Chat with support', val: 'chat' },
+        ] : [
+          { label: 'Vehicle', note: 'Transit van · LS22 4XR', val: 'edit' },
+          { label: 'Payouts', note: 'Bank •••• 0192 · weekly', val: 'edit' },
+          { label: 'Documents', note: 'Licence & insurance · valid to Mar 27', val: 'view' },
+          { label: 'Availability', note: 'Leeds zone · Mon–Sat', val: 'edit' },
+          { label: 'Tax summary', note: 'Self-employed statements', val: 'view' },
+          { label: 'Talk to us', note: 'Chat with support', val: 'chat' },
+        ]).map(r => ({ ...r, onTap: () => this.go(r.val === 'chat' ? 'chat' : 'profile') })),
+      },
+      chat: {
+        msgs: st.msgs.map(m => ({
+          text: m.text, align: m.from === 'me' ? 'flex-end' : 'flex-start',
+          bg: m.from === 'me' ? A : BG, fg: m.from === 'me' ? '#fff' : 'var(--color-text)',
+          bd: m.from === 'me' ? A : DIV,
+        })),
+        draft: st.draft, setDraft: e => this.setState({ draft: e.target.value }),
+        onKey: e => { if (e.key === 'Enter') this.sendMsg(); },
+        send: () => this.sendMsg(),
+        quick: ['Where is my parcel?', 'Change the address', 'It arrived damaged'].map(l => ({ label: l, onTap: () => this.sendMsg(l) })),
+      },
+      jobs: {
+        onlineLabel: st.online ? 'ONLINE' : 'OFFLINE', onlineFg: st.online ? A7 : MUT,
+        onlineBg: st.online ? A1 : 'transparent', onlinePos: st.online ? 'flex-end' : 'flex-start',
+        onlineKnob: st.online ? A : N3,
+        toggleOnline: () => this.setState({ online: !st.online }),
+        stats: [{ v: '£142', k: 'earned this week' }, { v: '6', k: 'drops today' }, { v: '98%', k: 'on time' }],
+        list: st.jobs.map((j, i) => ({
+          ...j,
+          onSkip: () => this.setState(s => ({ jobs: s.jobs.filter((_, k) => k !== i) })),
+          onAccept: () => this.setState({ screen: 'delivery', prev: 'jobs', delStep: 0 }),
+        })),
+        empty: st.jobs.length === 0,
+        refill: () => this.setState({ jobs: JOBS }),
+      },
+      del: {
+        ref: 'DLV-4471', title: del.title, addr: del.addr, note: del.note, addrKicker: del.kicker,
+        stepLabel: 'Step ' + Math.min(st.delStep + 1, 4) + ' of 4',
+        dots: [0, 1, 2, 3].map(i => ({ fill: i <= st.delStep ? A : DIV })),
+        isScan: st.delStep === 1, isProof: st.delStep === 3, isDone: st.delStep === 4,
+        barcode: 'DLV-4471 · 1 of 1',
+        proofs: [
+          { id: 'photo', label: 'Photo', note: 'Left with reception' },
+          { id: 'sign', label: 'Signature', note: 'Signed on the door' },
+        ].map(p => ({
+          label: p.label, note: p.note, bd: st.proof === p.id ? A : DIV, bg: st.proof === p.id ? A1 : 'transparent',
+          mark: st.proof === p.id ? 'CAPTURED' : 'tap to capture', tick: st.proof === p.id ? A7 : MUT,
+          onTap: () => this.setState({ proof: p.id }),
+        })),
+        receiver: st.receiver, setReceiver: e => this.setState({ receiver: e.target.value }),
+        receiverOut: st.receiver || 'T. Vance',
+        stamp: '16:04', payout: '£9.20',
+        cta: del.cta,
+        next: () => st.delStep >= 4 ? this.setState({ screen: 'jobs', delStep: 0 }) : this.setState({ delStep: st.delStep + 1 }),
+      },
+    };
+  }
+
+  sendMsg(text) {
+    const body = (text || this.state.draft).trim();
+    if (!body) return;
+    this.setState(s => ({ msgs: s.msgs.concat({ from: 'me', text: body }), draft: '' }));
+    setTimeout(() => this.setState(s => ({
+      msgs: s.msgs.concat({ from: 'them', text: 'Got it — checking with Ray now. Give me a moment.' }),
+    })), 900);
+  }
+}
+</script>
+</body>
+</html>
