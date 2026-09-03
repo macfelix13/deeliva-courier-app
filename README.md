@@ -1,25 +1,63 @@
-# CODING AGENTS: READ THIS FIRST
+# Deeliva Courier App
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+A same-day parcel courier app for Leeds: a **customer** flow (send a parcel,
+track it live, see order history) and a **courier** flow (accept jobs, run
+the pickup → scan → drop-off → proof-of-delivery flow), in one React Native
+app with a role switch in Profile.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+This repo started as a [Claude Design](https://claude.ai/design) handoff —
+see `README-design-handoff.md`, `chats/`, and `project/` for the original
+HTML/CSS/JS prototype and the conversation that shaped it. Everything in
+`backend/` and `app/` below is the real implementation built from that
+prototype.
 
-## What you should do — IMPORTANT
+## Structure
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+- `backend/` — a small Express + TypeScript API standing in for the real
+  Deeliva backend. In-memory store (with a JSON file for persistence across
+  restarts), seeded with the same demo data the prototype used. See
+  `backend/README.md` for the endpoint list and how to swap in the real API
+  later.
+- `app/` — the Expo (React Native + TypeScript) app. Two role-based
+  navigation trees (customer / courier), 11 screens, styled to match the
+  prototype's "Industry" design system (Barlow / Barlow Condensed, hairline
+  blueprint frames with registration-mark corners, one steel-blue accent).
 
-**Read `project/Deeliva Courier App.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+## Running it
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+Two processes, in two terminals:
 
-## About the design files
+```bash
+# 1. Backend
+cd backend
+npm install
+npm run dev          # http://localhost:4000
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+# 2. App
+cd app
+npm install
+npm start             # then press i (iOS simulator), a (Android), or scan the QR code in Expo Go
+```
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+The app talks to the backend over HTTP — see `app/src/api/config.ts` for the
+base URL (defaults to `localhost:4000` on iOS, `10.0.2.2:4000` on the Android
+emulator; a physical device needs your machine's LAN IP).
 
-## Bundle contents
+## Design decisions worth knowing
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Mobile delivery app design` project files (HTML prototypes, assets, components)
+- **Both roles, one app.** The prototype's "Customer / Courier" panel was a
+  design-tool aid; in the real app that's a "Switch to courier/customer
+  account" action in Profile, which flips the whole navigation tree.
+- **Variations.** The prototype exposed four layout variations as toggles
+  (nav pattern, home layout, tracking style, checkout flow). This build picks
+  the defaults the prototype shipped with — bottom tabs, card-list home,
+  map tracking, stepped checkout — since a real app ships one of each rather
+  than a live toggle.
+- **Backend is a placeholder.** It's a real HTTP API with the shapes the app
+  expects, not the real Deeliva service — see `backend/README.md` for how to
+  point the app at the real thing when it's ready.
+- **New parcel vs. order detail.** The prototype's "detail" screen doubled as
+  both "create a shipment" and "view a past shipment" (it always showed the
+  same mock parcel). With a real backend, past orders have their own data, so
+  this build splits that into a booking screen (`NewParcel`) and a read-only
+  past-order screen (`OrderDetail`).
